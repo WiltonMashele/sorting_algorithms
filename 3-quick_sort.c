@@ -4,15 +4,12 @@
  * swap_elements - swaps the values of two integers.
  * @x: pointer to the first integer.
  * @y: pointer to the second integer.
- * @array: array of integers.
- * @size: size of the array.
  **/
-void swap_elements(int *array, int *x, int *y, size_t size)
+void swap_elements(int *x, int *y)
 {
 	int temp = *x;
 	*x = *y;
 	*y = temp;
-	print_array(array, size);
 }
 
 /**
@@ -31,20 +28,21 @@ int hoare_partition(int *array, int low, int high, size_t size)
 
 	while (true)
 	{
-		do
-		{
+		do {
 			left++;
 		} while (array[left] < pivot);
 
-		do
-		{
+		do {
 			right--;
 		} while (array[right] > pivot);
 
 		if (left >= right)
-			return right;
+		{
+			return(right);
+		}
 
-		swap_elements(array, &array[left], &array[right], size);
+		swap_elements(&array[left], &array[right]);
+		print_array(array, size);
 	}
 }
 
@@ -57,9 +55,11 @@ int hoare_partition(int *array, int low, int high, size_t size)
  **/
 void recursive_quick_sort(int *array, int low, int high, size_t size)
 {
+	int partition_index;
+
 	if (low < high)
 	{
-		int partition_index = hoare_partition(array, low, high, size);
+		partition_index = hoare_partition(array, low, high, size);
 		recursive_quick_sort(array, low, partition_index, size);
 		recursive_quick_sort(array, partition_index + 1, high, size);
 	}
@@ -77,3 +77,4 @@ void quick_sort(int *array, size_t size)
 
 	recursive_quick_sort(array, 0, size - 1, size);
 }
+
