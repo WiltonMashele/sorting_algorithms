@@ -69,7 +69,7 @@ void perform_quickSort(int *arr, int start, int end, size_t sz)
  * @arr: The array.
  * @sz: The size of the array.
  */
-void quick_sort(int *arr, size_t sz)
+void quick_sort(int *array, size_t size)
 {
 	if (!arr || sz < 2)
 		return;
