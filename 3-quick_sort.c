@@ -1,65 +1,77 @@
 #include "sort.h"
 
 /**
- * swap_ints - Swaps the values of two integers.
+ * swap_elements - Swaps two integers in an array.
+ * @arr: The array.
  * @a: Pointer to the first integer.
  * @b: Pointer to the second integer.
+ * @sz: The size of the array.
  */
-void swap_ints(int *a, int *b)
+void swap_elements(int *arr, int *a, int *b, size_t sz)
 {
-	int tmp = *a;
+	int temp = *a;
+
 	*a = *b;
-	*b = tmp;
+	*b = temp;
+	print_array(arr, sz);
 }
 
 /**
- * partition - Rearranges a subset of an integer array according to a given
- * scheme.
- * @array: The array being targeted.
- * @size: The size of the array.
- * @left: The starting index of the subset.
- * @right: The ending index of the subset.
- * Return: The index of the partition.
+ * partition_array - Partitions the array for quicksort.
+ * @arr: The array.
+ * @start: The starting index.
+ * @end: The ending index.
+ * @sz: The size of the array.
+ * Return: Number of changes made.
  */
-int partition(int *array, size_t size, int left, int right)
+int partition_array(int *arr, int start, int end, size_t sz)
 {
-	int *pivot = array + right;
-	int above = left, below = left;
+	int pivotValue = arr[end];
+	int pivotIndex = start;
+	int iter;
 
-	while (below < right)
+	for (iter = start; iter < end; iter++)
 	{
-		if (array[below] < *pivot)
+		if (arr[iter] <= pivotValue)
 		{
-			if (above != below)
-			{
-				swap_ints(array + below, array + above);
-				print_array(array, size);
-			}
-			above++;
+			if (pivotIndex != iter)
+				swap_elements(arr, &arr[iter], &arr[pivotIndex], sz);
+			pivotIndex++;
 		}
-		below++;
 	}
+	if (pivotIndex != end)
+		swap_elements(arr, &arr[end], &arr[pivotIndex], sz);
 
-	if (array[above] > *pivot)
-	{
-		swap_ints(array + above, pivot);
-		print_array(array, size);
-	}
-
-	return (above);
+	return pivotIndex;
 }
 
 /**
- * quick_sort - Organizes integers by utilizing quicksort and a partitioning
- * method.
- * @array: A pointer to the integer array.
- * @size: The total number of elements within the array.
- * Note: The array is printed after each individual element is swapped.
+ * perform_quickSort - Performs the quicksort algorithm.
+ * @arr: The array.
+ * @start: The starting index.
+ * @end: The ending index.
+ * @sz: The size of the array.
  */
-void quick_sort(int *array, size_t size)
+void perform_quickSort(int *arr, int start, int end, size_t sz)
 {
-	if (array != NULL && size >= 2)
+	int partitionIndex;
+
+	if (start < end)
 	{
-		partition(array, size, 0, size - 1);
+		partitionIndex = partition_array(arr, start, end, sz);
+		perform_quickSort(arr, start, partitionIndex - 1, sz);
+		perform_quickSort(arr, partitionIndex + 1, end, sz);
 	}
+}
+
+/**
+ * quick_sort - Sorts an array of integers in ascending order using quicksort.
+ * @arr: The array.
+ * @sz: The size of the array.
+ */
+void quick_sort(int *arr, size_t sz)
+{
+	if (!arr || sz < 2)
+		return;
+	perform_quickSort(arr, 0, sz - 1, sz);
 }
