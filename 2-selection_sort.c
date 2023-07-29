@@ -15,7 +15,7 @@ void swap_elements(int *first, int *second)
 }
 
 /**
- * selection_sort - Sorts an integer array in ascending order using 
+ * selection_sort - Sorts an integer array in ascending order using
  *                  the selection sort method.
  * @array: Pointer to an array of integers.
  * @size: The number of elements in the array.
