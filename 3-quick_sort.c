@@ -1,77 +1,79 @@
 #include "sort.h"
 
 /**
- * swap_elements - Swaps two integers in an array.
- * @arr: The array.
- * @a: Pointer to the first integer.
- * @b: Pointer to the second integer.
- * @sz: The size of the array.
- */
-void swap_elements(int *arr, int *a, int *b, size_t sz)
+ * swap_elements - swaps the values of two integers.
+ * @x: pointer to the first integer.
+ * @y: pointer to the second integer.
+ * @array: array of integers.
+ * @size: size of the array.
+ **/
+void swap_elements(int *array, int *x, int *y, size_t size)
 {
-	int temp = *a;
-
-	*a = *b;
-	*b = temp;
-	print_array(arr, sz);
+	int temp = *x;
+	*x = *y;
+	*y = temp;
+	print_array(array, size);
 }
 
 /**
- * partition_array - Partitions the array for quicksort.
- * @arr: The array.
- * @start: The starting index.
- * @end: The ending index.
- * @sz: The size of the array.
- * Return: Number of changes made.
- */
-int partition_array(int *arr, int start, int end, size_t sz)
+ * hoare_partition - Hoare partition scheme for the array.
+ * @array: array of integers.
+ * @low: lower index.
+ * @high: higher index.
+ * @size: size of the array.
+ * Return: partition index.
+ **/
+int hoare_partition(int *array, int low, int high, size_t size)
 {
-	int pivotValue = arr[end];
-	int pivotIndex = start;
-	int iter;
+	int pivot = array[low];
+	int left = low - 1;
+	int right = high + 1;
 
-	for (iter = start; iter < end; iter++)
+	while (true)
 	{
-		if (arr[iter] <= pivotValue)
+		do
 		{
-			if (pivotIndex != iter)
-				swap_elements(arr, &arr[iter], &arr[pivotIndex], sz);
-			pivotIndex++;
-		}
-	}
-	if (pivotIndex != end)
-		swap_elements(arr, &arr[end], &arr[pivotIndex], sz);
+			left++;
+		} while (array[left] < pivot);
 
-	return pivotIndex;
+		do
+		{
+			right--;
+		} while (array[right] > pivot);
+
+		if (left >= right)
+			return right;
+
+		swap_elements(array, &array[left], &array[right], size);
+	}
 }
 
 /**
- * perform_quickSort - Performs the quicksort algorithm.
- * @arr: The array.
- * @start: The starting index.
- * @end: The ending index.
- * @sz: The size of the array.
- */
-void perform_quickSort(int *arr, int start, int end, size_t sz)
+ * recursive_quick_sort - recursive function to perform quick sort.
+ * @array: array of integers.
+ * @low: lower index.
+ * @high: higher index.
+ * @size: size of the array.
+ **/
+void recursive_quick_sort(int *array, int low, int high, size_t size)
 {
-	int partitionIndex;
-
-	if (start < end)
+	if (low < high)
 	{
-		partitionIndex = partition_array(arr, start, end, sz);
-		perform_quickSort(arr, start, partitionIndex - 1, sz);
-		perform_quickSort(arr, partitionIndex + 1, end, sz);
+		int partition_index = hoare_partition(array, low, high, size);
+		recursive_quick_sort(array, low, partition_index, size);
+		recursive_quick_sort(array, partition_index + 1, high, size);
 	}
 }
 
 /**
- * quick_sort - Sorts an array of integers in ascending order using quicksort.
- * @array: The array.
- * @size: The size of the array.
- */
+ * quick_sort - sorts an array of integers in ascending order.
+ * @array: array of integers.
+ * @size: size of the array.
+ **/
 void quick_sort(int *array, size_t size)
 {
 	if (!array || size < 2)
 		return;
-	perform_quickSort(array, 0, size - 1, size);
+
+	recursive_quick_sort(array, 0, size - 1, size);
 }
