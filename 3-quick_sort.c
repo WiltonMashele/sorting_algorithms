@@ -38,7 +38,7 @@ int hoare_partition(int *array, int low, int high, size_t size)
 
 		if (left >= right)
 		{
-			return(right);
+			return (right);
 		}
 
 		swap_elements(&array[left], &array[right]);
