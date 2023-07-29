@@ -66,12 +66,12 @@ void perform_quickSort(int *arr, int start, int end, size_t sz)
 
 /**
  * quick_sort - Sorts an array of integers in ascending order using quicksort.
- * @arr: The array.
- * @sz: The size of the array.
+ * @array: The array.
+ * @size: The size of the array.
  */
 void quick_sort(int *array, size_t size)
 {
-	if (!arr || sz < 2)
+	if (!array || size < 2)
 		return;
-	perform_quickSort(arr, 0, sz - 1, sz);
+	perform_quickSort(array, 0, size - 1, size);
 }
