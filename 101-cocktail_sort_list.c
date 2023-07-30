@@ -1,9 +1,7 @@
 #include "sort.h"
 
-void exchange_node_forward(listint_t **list, listint_t **end,
-		listint_t **current);
-void exchange_node_backward(listint_t **list, listint_t **end,
-		listint_t **current);
+void exchange_node_forward(listint_t **list, listint_t **end, listint_t **current);
+void exchange_node_backward(listint_t **list, listint_t **end, listint_t **current);
 void perform_cocktail_sort(listint_t **list);
 
 /**
