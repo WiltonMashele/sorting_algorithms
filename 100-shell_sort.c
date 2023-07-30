@@ -42,12 +42,12 @@ void shell_sort(int *array, size_t size)
 			j = i;
 			int tmp = array[j];
 
-			while (j >= gap && array[j - gap] > array[j])
-			{
-				array[j] = array[j - gap];
-				array[j - gap] = tmp;
-				j -= gap;
-			}
+                        while (j >= gap && array[j - gap] > tmp)
+                        {
+                                array[j] = array[j - gap];
+                                j -= gap;
+                        }
+                        array[j] = tmp;
 		}
 		print_array(array, size);
 		gap /= 3;
