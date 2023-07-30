@@ -40,9 +40,12 @@ void shell_sort(int *array, size_t size)
 		for (i = gap; i < size; i++)
 		{
 			j = i;
+			int tmp = array[j];
+
 			while (j >= gap && array[j - gap] > array[j])
 			{
-				swap_integers(array + j, array + (j - gap));
+				array[j] = array[j - gap];
+				array[j - gap] = tmp;
 				j -= gap;
 			}
 		}
