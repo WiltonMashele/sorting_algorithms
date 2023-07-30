@@ -20,8 +20,7 @@ void swap_integers(int *a, int *b)
  * @array: Pointer to the array of integers.
  * @size: The total number of elements in the array.
  *
- * Description: Implements the shell sort algorithm with
- *	the Knuth interval sequence.
+ * Description: Implements the shell sort algorithm with the Knuth interval sequence.
  */
 void shell_sort(int *array, size_t size)
 {
@@ -29,6 +28,7 @@ void shell_sort(int *array, size_t size)
 
 	if (array == NULL || size < 2)
 		return;
+
 	gap = 1;
 	while (gap < size / 3)
 	{
@@ -40,14 +40,11 @@ void shell_sort(int *array, size_t size)
 		for (i = gap; i < size; i++)
 		{
 			j = i;
-			int tmp = array[j];
-
-                        while (j >= gap && array[j - gap] > tmp)
-                        {
-                                array[j] = array[j - gap];
-                                j -= gap;
-                        }
-                        array[j] = tmp;
+			while (j >= gap && array[j - gap] > array[j])
+			{
+				swap_integers(array + j, array + (j - gap));
+				j -= gap;
+			}
 		}
 		print_array(array, size);
 		gap /= 3;
