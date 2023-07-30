@@ -3,78 +3,76 @@
 #include <stdio.h>
 
 /**
- * merge_sort - Function to sort an array using the merge sort algorithm.
- * @array: The array that needs to be sorted.
+ * merge_sort - Function to initiate merge sort on an integer array.
+ * @array: Pointer to the integer array to be sorted.
  * @size: Number of elements in the array.
- * Returns: None.
  */
 void merge_sort(int *array, size_t size)
 {
-	size_t idx = 0;
-	int *tempArray = NULL;
+	size_t index;
+	int *temp_array;
 
-	if (array == NULL || size < 2)
-		return;
-	tempArray = malloc(sizeof(int) * size);
-	if (tempArray == NULL)
-		return;
-	for (idx = 0; idx < size; idx++)
-		tempArray[idx] = array[idx];
-	split_and_merge(0, size, array, tempArray);
-	free(tempArray);
+	if (array == NULL || size < 2) return;
+
+	temp_array = malloc(sizeof(int) * size);
+	if (temp_array == NULL) return;
+
+	for (index = 0; index < size; index++) {
+		temp_array[index] = array[index];
+	}
+
+	merge_partition(0, size, array, temp_array);
+	free(temp_array);
 }
 
 /**
- * merge - Function to merge sorted subarrays.
- * @start: Start index.
- * @middle: Middle index.
- * @end: End index.
- * @destination: Array to store sorted elements.
- * @source: Original array.
- * Returns: None.
+ * merge - Merges two sorted subarrays into one.
+ * @lo: Start index of the first subarray.
+ * @mi: Start index of the second subarray.
+ * @hi: End index of the second subarray.
+ * @dest: Pointer to destination array.
+ * @src: Pointer to source array.
  */
-void merge(size_t start, size_t middle, size_t end, int *destination, int *source)
+void merge(size_t lo, size_t mi, size_t hi, int *dest, int *src)
 {
-	size_t i = start, j = middle, k = start;
+	size_t i = lo, j = mi, k = lo;
 
 	printf("Merging...\n");
 	printf("[left]: ");
-	print_array(source + start, middle - start);
+	print_array(src + lo, mi - lo);
 	printf("[right]: ");
-	print_array(source + middle, end - middle);
-	for (k = start; k < end; k++)
-	{
-		if (i < middle && (j >= end || source[i] <= source[j]))
-		{
-			destination[k] = source[i++];
-		}
-		else
-		{
-			destination[k] = source[j++];
+	print_array(src + mi, hi - mi);
+
+	while (k < hi) {
+		if (i < mi && (j >= hi || src[i] <= src[j])) {
+			dest[k++] = src[i++];
+		} else {
+			dest[k++] = src[j++];
 		}
 	}
 	printf("[Done]: ");
-	print_array(destination + start, end - start);
+	print_array(dest + lo, hi - lo);
 }
 
 /**
- * split_and_merge - Function that divides the array and sorts recursively.
- * @start: Start index.
- * @end: End index.
- * @array: Array to be sorted.
- * @tempArray: Temporary array to store values.
- * Returns: None.
+ * merge_partition - Recursively divides array and sorts.
+ * @lo: Start index of current array partition.
+ * @hi: End index of current array partition.
+ * @array: Pointer to array being sorted.
+ * @base: Pointer to a temporary array.
  */
-void split_and_merge(size_t start, size_t end, int *array, int *tempArray)
+void merge_partition(size_t lo, size_t hi, int *array, int *base)
 {
-	size_t middle;
+	size_t mi;
 
-	if (end - start < 2)
-		return;
-	middle = (start + end) / 2;
-	split_and_merge(start, middle, array, tempArray);
-	split_and_merge(middle, end, array, tempArray);
-	merge(start, middle, end, array, tempArray);
-	for (middle = start; middle < end; middle++)
-		tempArray[middle] = array[middle];
+	if (hi - lo < 2) return;
+
+	mi = (lo + hi) / 2;
+	merge_partition(lo, mi, array, base);
+	merge_partition(mi, hi, array, base);
+	merge(lo, mi, hi, array, base);
+
+	for (mi = lo; mi < hi; mi++) {
+		base[mi] = array[mi];
+	}
 }
