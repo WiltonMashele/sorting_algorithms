@@ -1,83 +1,80 @@
 #include "sort.h"
-
-void combine_arrays(int *partial, int *temp, size_t start, size_t middle,
-			size_t end);
-void recursive_merge_sort(int *partial, int *temp, size_t start, size_t end);
-void merge_sort(int *array, size_t size);
+#include <stdlib.h>
+#include <stdio.h>
 
 /**
- * combine_arrays - Combine two sorted arrays into one sorted array.
- * @partial: A part of the array that needs to be sorted.
- * @temp: Temporary storage for the sorting process.
- * @start: The starting index of the first array.
- * @middle: The ending index of the first array and starting index of the
- *	second array.
- * @end: The ending index of the second array.
- */
-void combine_arrays(int *partial, int *temp, size_t start, size_t middle,
-			size_t end)
-{
-	size_t i, j, k = 0;
-
-	printf("Combining...\n[Left]: ");
-	print_array(partial + start, middle - start);
-
-	printf("[Right]: ");
-	print_array(partial + middle, end - middle);
-
-	for (i = start, j = middle; i < middle && j < end; k++)
-		temp[k] = (partial[i] < partial[j]) ? partial[i++] : partial[j++];
-	while (i < middle)
-		temp[k++] = partial[i++];
-	while (j < end)
-		temp[k++] = partial[j++];
-	for (i = start, k = 0; i < end; i++)
-		partial[i] = temp[k++];
-
-	printf("[Completed]: ");
-	print_array(partial + start, end - start);
-}
-
-/**
- * recursive_merge_sort - A recursive method to implement merge sort.
- * @partial: A part of the array that needs to be sorted.
- * @temp: Temporary storage for the sorting process.
- * @start: The starting index of the part that needs to be sorted.
- * @end: The ending index of the part that needs to be sorted.
- */
-void recursive_merge_sort(int *partial, int *temp, size_t start, size_t end)
-{
-	size_t middle;
-
-	if (end - start > 1)
-	{
-		middle = start + (end - start) / 2;
-		recursive_merge_sort(partial, temp, start, middle);
-		recursive_merge_sort(partial, temp, middle, end);
-		combine_arrays(partial, temp, start, middle, end);
-	}
-}
-
-/**
- * merge_sort - Organize an array of integers in ascending
- *              order utilizing the merge sort technique.
- * @array: The array of integers that needs to be sorted.
- * @size: The length of the array.
- *
- * Note: This function follows the top-down approach of merge sort.
+ * merge_sort - Function to sort an array using the merge sort algorithm.
+ * @array: The array that needs to be sorted.
+ * @size: Number of elements in the array.
+ * Returns: None.
  */
 void merge_sort(int *array, size_t size)
 {
-	int *temp;
+	size_t idx = 0;
+	int *tempArray = NULL;
 
 	if (array == NULL || size < 2)
 		return;
-
-	temp = malloc(sizeof(int) * size);
-	if (temp == NULL)
+	tempArray = malloc(sizeof(int) * size);
+	if (tempArray == NULL)
 		return;
+	for (idx = 0; idx < size; idx++)
+		tempArray[idx] = array[idx];
+	split_and_merge(0, size, array, tempArray);
+	free(tempArray);
+}
 
-	recursive_merge_sort(array, temp, 0, size);
+/**
+ * merge - Function to merge sorted subarrays.
+ * @start: Start index.
+ * @middle: Middle index.
+ * @end: End index.
+ * @destination: Array to store sorted elements.
+ * @source: Original array.
+ * Returns: None.
+ */
+void merge(size_t start, size_t middle, size_t end, int *destination, int *source)
+{
+	size_t i = start, j = middle, k = start;
 
-	free(temp);
+	printf("Merging...\n");
+	printf("[left]: ");
+	print_array(source + start, middle - start);
+	printf("[right]: ");
+	print_array(source + middle, end - middle);
+	for (k = start; k < end; k++)
+	{
+		if (i < middle && (j >= end || source[i] <= source[j]))
+		{
+			destination[k] = source[i++];
+		}
+		else
+		{
+			destination[k] = source[j++];
+		}
+	}
+	printf("[Done]: ");
+	print_array(destination + start, end - start);
+}
+
+/**
+ * split_and_merge - Function that divides the array and sorts recursively.
+ * @start: Start index.
+ * @end: End index.
+ * @array: Array to be sorted.
+ * @tempArray: Temporary array to store values.
+ * Returns: None.
+ */
+void split_and_merge(size_t start, size_t end, int *array, int *tempArray)
+{
+	size_t middle;
+
+	if (end - start < 2)
+		return;
+	middle = (start + end) / 2;
+	split_and_merge(start, middle, array, tempArray);
+	split_and_merge(middle, end, array, tempArray);
+	merge(start, middle, end, array, tempArray);
+	for (middle = start; middle < end; middle++)
+		tempArray[middle] = array[middle];
 }
