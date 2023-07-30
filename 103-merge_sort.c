@@ -44,15 +44,15 @@ void merge_subarr(int *subarr, int *buff, size_t front, size_t mid, size_t back)
  */
 void sort_recursive(int *segment, int *temp, size_t start, size_t end)
 {
-	size_t middle;
+        size_t middle;
 
-	if (end - start > 1)
-	{
-		middle = start + (end - start) / 2;
-		sort_recursive(segment, temp, start, middle);
-		sort_recursive(segment, temp, middle, end);
-		combine_segments(segment, temp, start, middle, end);
-	}
+        if (end - start > 1)
+        {
+                middle = start + (end - start) / 2;
+                sort_recursive(segment, temp, start, middle);
+                sort_recursive(segment, temp, middle, end);
+                merge_subarr(segment, temp, start, middle, end); // Replace with merge_subarr
+        }
 }
 
 /**
