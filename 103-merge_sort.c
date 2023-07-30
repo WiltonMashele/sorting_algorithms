@@ -1,80 +1,85 @@
 #include "sort.h"
 
-void merge_subarr(int *subarr, int *buff, size_t front, size_t mid, size_t back);
-void merge_sort_recursive(int *subarr, int *buff, size_t front, size_t back);
+void merge_parts(int *array, int *temp, size_t start, size_t middle, size_t end);
+void merge_sort_while(int *array, int *temp, size_t start, size_t end);
 void merge_sort(int *array, size_t size);
 
 /**
- * merge_subarr - Combine a given segment of integers.
- * @subarr: A segment of an array of integers for merging.
- * @buff: A buffer to keep the merged segment.
- * @front: The starting index of the array segment.
- * @mid: The middle index of the array segment.
- * @back: The ending index of the array segment.
+ * merge_parts - Merges two partitions of an array.
+ * @array: Pointer to an integer array.
+ * @temp: A temporary buffer for storing the merged array.
+ * @start: The starting index of the first partition.
+ * @middle: The ending index of the first partition.
+ * @end: The ending index of the second partition.
  */
-void merge_subarr(int *subarr, int *buff, size_t front, size_t mid, size_t back)
+void merge_parts(int *array, int *temp, size_t start, size_t middle, size_t end)
 {
-	size_t left, right, merge_idx;
+	size_t leftIndex = start, rightIndex = middle, tempIndex = 0;
 
-	printf("Merging process...\n[Left]: ");
-	print_array(subarr + front, mid - front);
+	printf("Merging...\n[left]: ");
+	print_array(array + start, middle - start);
 
-	printf("[Right]: ");
-	print_array(subarr + mid, back - mid);
+	printf("[right]: ");
+	print_array(array + middle, end - middle);
 
-	for (left = front, right = mid, merge_idx = 0; left < mid && right < back; merge_idx++)
-		buff[merge_idx] = (subarr[left] < subarr[right]) ? subarr[left++] : subarr[right++];
-	while (left < mid)
-		buff[merge_idx++] = subarr[left++];
-	while (right < back)
-		buff[merge_idx++] = subarr[right++];
-	for (left = front, merge_idx = 0; left < back; left++)
-		subarr[left] = buff[merge_idx++];
+	while (leftIndex < middle && rightIndex < end)
+	{
+		if (array[leftIndex] < array[rightIndex])
+			temp[tempIndex++] = array[leftIndex++];
+		else
+			temp[tempIndex++] = array[rightIndex++];
+	}
 
-	printf("[Completed]: ");
-	print_array(subarr + front, back - front);
+	while (leftIndex < middle) temp[tempIndex++] = array[leftIndex++];
+	while (rightIndex < end) temp[tempIndex++] = array[rightIndex++];
+
+	for (size_t i = start; i < end; i++) array[i] = temp[i - start];
+
+	printf("[Done]: ");
+	print_array(array + start, end - start);
 }
 
 /**
- * sort_recursive - Perform recursive merge sort on a segment of integers.
- * @segment: A segment of an array of integers to sort.
- * @temp: A temporary buffer to hold the sorted segment.
- * @start: The beginning index of the segment.
- * @end: The ending index of the segment.
+ * merge_sort_while - Sorts a subarray iteratively.
+ * @array: Pointer to an integer array to sort.
+ * @temp: A temporary buffer for storing the merged array.
+ * @start: The starting index of the array.
+ * @end: The ending index of the array.
  */
-void sort_recursive(int *segment, int *temp, size_t start, size_t end)
+void merge_sort_while(int *array, int *temp, size_t start, size_t end)
 {
-        size_t middle;
+	size_t size = end - start;
 
-        if (end - start > 1)
-        {
-                middle = start + (end - start) / 2;
-                sort_recursive(segment, temp, start, middle);
-                sort_recursive(segment, temp, middle, end);
-                merge_subarr(segment, temp, start, middle, end); // Replace with merge_subarr
-        }
+	for (size_t width = 1; width < size; width *= 2)
+	{
+		for (size_t i = start; i < end; i += 2 * width)
+		{
+			size_t middle = i + width < end ? i + width : end;
+			size_t finish = i + 2 * width < end ? i + 2 * width : end;
+			merge_parts(array, temp, i, middle, finish);
+		}
+	}
 }
 
 /**
- * perform_merge_sort - Order an array of integers in ascending
- *                      fashion utilizing the merge sort technique.
- * @arr: An array of integers.
- * @length: The length of the array.
+ * merge_sort - Executes merge sort on an integer array.
+ * @array: The array to be sorted.
+ * @size: The size of the array.
  *
- * Description: Applies the top-down variation of merge sort.
+ * Description: Executes merge sort using an iterative method.
  */
-void perform_merge_sort(int *arr, size_t length)
+void merge_sort(int *array, size_t size)
 {
 	int *temp;
 
-	if (arr == NULL || length < 2)
+	if (array == NULL || size < 2)
 		return;
 
-	temp = malloc(sizeof(int) * length);
+	temp = malloc(sizeof(int) * size);
 	if (temp == NULL)
 		return;
 
-	sort_recursive(arr, temp, 0, length);
+	merge_sort_while(array, temp, 0, size);
 
 	free(temp);
 }
