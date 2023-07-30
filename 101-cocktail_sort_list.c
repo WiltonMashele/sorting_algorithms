@@ -1,104 +1,104 @@
 #include "sort.h"
 
-void exchange_node_forward(listint_t **list, listint_t **end, listint_t **current);
-void exchange_node_backward(listint_t **list, listint_t **end, listint_t **current);
-void perform_cocktail_sort(listint_t **list);
+void swap_forward(listint_t **head, listint_t **end, listint_t **mover);
+void swap_backward(listint_t **head, listint_t **end, listint_t **mover);
+void cocktail_sort_list(listint_t **list);
 
 /**
- * exchange_node_forward - Interchange a node in a listint_t doubly-linked 
- *                         integer list with the following node.
- * @list: Pointer to the head of the doubly-linked integer list.
- * @end: Pointer to the tail of the doubly-linked list.
- * @current: Pointer to the node being swapped in the cocktail sort algorithm.
+ * swap_forward - Change places of a node with the next node in a
+ *                listint_t doubly-linked integer list.
+ * @head: Pointer to the start of the doubly-linked list.
+ * @end: Pointer to the last node of the doubly-linked list.
+ * @mover: Pointer to the current node being swapped by the algorithm.
  */
-void exchange_node_forward(listint_t **list, listint_t **end, listint_t **current)
+void swap_forward(listint_t **head, listint_t **end, listint_t **mover)
 {
-	listint_t *temp = (*current)->next;
+	listint_t *temp = (*mover)->next;
 
-	if ((*current)->prev != NULL)
-		(*current)->prev->next = temp;
+	if ((*mover)->prev)
+		(*mover)->prev->next = temp;
 	else
-		*list = temp;
-
-	temp->prev = (*current)->prev;
-	(*current)->next = temp->next;
-
-	if (temp->next != NULL)
-		temp->next->prev = *current;
+		*head = temp;
+	temp->prev = (*mover)->prev;
+	(*mover)->next = temp->next;
+	if (temp->next)
+		temp->next->prev = *mover;
 	else
-		*end = *current;
-
-	(*current)->prev = temp;
-	temp->next = *current;
-	*current = temp;
+		*end = *mover;
+	(*mover)->prev = temp;
+	temp->next = *mover;
+	*mover = temp;
 }
 
 /**
- * exchange_node_backward - Interchange a node in a listint_t doubly-linked 
- *                          integer list with the preceding node.
- * @list: Pointer to the head of the doubly-linked integer list.
- * @end: Pointer to the tail of the doubly-linked list.
- * @current: Pointer to the node being swapped in the cocktail sort algorithm.
+ * swap_backward - Change places of a node with the previous node in a
+ *                 listint_t doubly-linked integer list.
+ * @head: Pointer to the start of the doubly-linked list.
+ * @end: Pointer to the last node of the doubly-linked list.
+ * @mover: Pointer to the current node being swapped by the algorithm.
  */
-void exchange_node_backward(listint_t **list, listint_t **end, listint_t **current)
+void swap_backward(listint_t **head, listint_t **end, listint_t **mover)
 {
-	listint_t *temp = (*current)->prev;
+	listint_t *temp = (*mover)->prev;
 
-	if ((*current)->next != NULL)
-		(*current)->next->prev = temp;
+	if ((*mover)->next)
+		(*mover)->next->prev = temp;
 	else
 		*end = temp;
-
-	temp->next = (*current)->next;
-	(*current)->prev = temp->prev;
-
-	if (temp->prev != NULL)
-		temp->prev->next = *current;
+	temp->next = (*mover)->next;
+	(*mover)->prev = temp->prev;
+	if (temp->prev)
+		temp->prev->next = *mover;
 	else
-		*list = *current;
-
-	(*current)->next = temp;
-	temp->prev = *current;
-	*current = temp;
+		*head = *mover;
+	(*mover)->next = temp;
+	temp->prev = *mover;
+	*mover = temp;
 }
 
 /**
- * perform_cocktail_sort - Arrange a listint_t doubly-linked integer list 
- *                         in ascending order utilizing the cocktail shaker sort.
- * @list: Pointer to the head of a listint_t doubly-linked list.
+ * cocktail_sort_list - Arranges a listint_t doubly-linked integer list in
+ *                      ascending order using the cocktail shaker sort method.
+ * @list: Pointer to the start of a listint_t doubly-linked list.
  */
-void perform_cocktail_sort(listint_t **list)
+void cocktail_sort_list(listint_t **list)
 {
-	listint_t *end, *current;
-	bool is_sorted = false;
+	listint_t *end, *mover;
+	bool sorting_done = false;
 
-	if (list == NULL || *list == NULL || (*list)->next == NULL)
+	if (!list || !*list || !(*list)->next)
 		return;
 
-	for (end = *list; end->next != NULL;)
+	end = *list;
+	while (end->next)
 		end = end->next;
 
-	while (is_sorted == false)
+	while (!sorting_done)
 	{
-		is_sorted = true;
-		for (current = *list; current != end; current = current->next)
+		sorting_done = true;
+		mover = *list;
+		while (mover != end)
 		{
-			if (current->n > current->next->n)
+			if (mover->n > mover->next->n)
 			{
-				exchange_node_forward(list, &end, &current);
+				swap_forward(list, &end, &mover);
 				print_list((const listint_t *)*list);
-				is_sorted = false;
+				sorting_done = false;
 			}
+			mover = mover->next;
 		}
-		for (current = current->prev; current != *list;
-				current = current->prev)
+
+		mover = mover->prev;
+		while (mover != *list)
 		{
-			if (current->n < current->prev->n)
+			if (mover->n < mover->prev->n)
 			{
-				exchange_node_backward(list, &end, &current);
+				swap_backward(list, &end, &mover);
 				print_list((const listint_t *)*list);
-				is_sorted = false;
+				sorting_done = false;
 			}
+			mover = mover->prev;
 		}
 	}
 }
+
