@@ -1,38 +1,38 @@
 #include "sort.h"
 
-void combine_segments(int *segment, int *temp, size_t start, size_t middle, size_t end);
-void sort_recursive(int *segment, int *temp, size_t start, size_t end);
-void perform_merge_sort(int *arr, size_t length);
+void merge_subarr(int *subarr, int *buff, size_t front, size_t mid, size_t back);
+void merge_sort_recursive(int *subarr, int *buff, size_t front, size_t back);
+void merge_sort(int *array, size_t size);
 
 /**
- * combine_segments - Merge parts of an array of integers.
- * @segment: A segment of an array of integers to be merged.
- * @temp: A temporary buffer to keep the merged result.
- * @start: The beginning index of the array segment.
- * @middle: The central index of the array segment.
- * @end: The ending index of the array segment.
+ * merge_subarr - Combine a given segment of integers.
+ * @subarr: A segment of an array of integers for merging.
+ * @buff: A buffer to keep the merged segment.
+ * @front: The starting index of the array segment.
+ * @mid: The middle index of the array segment.
+ * @back: The ending index of the array segment.
  */
-void combine_segments(int *segment, int *temp, size_t start, size_t middle, size_t end)
+void merge_subarr(int *subarr, int *buff, size_t front, size_t mid, size_t back)
 {
-	size_t a, b, c = 0;
+	size_t left, right, merge_idx;
 
-	printf("Combining segments...\n[Left]: ");
-	print_array(segment + start, middle - start);
+	printf("Merging process...\n[Left]: ");
+	print_array(subarr + front, mid - front);
 
 	printf("[Right]: ");
-	print_array(segment + middle, end - middle);
+	print_array(subarr + mid, back - mid);
 
-	for (a = start, b = middle; a < middle && b < end; c++)
-		temp[c] = (segment[a] < segment[b]) ? segment[a++] : segment[b++];
-	for (; a < middle; a++)
-		temp[c++] = segment[a];
-	for (; b < end; b++)
-		temp[c++] = segment[b];
-	for (a = start, c = 0; a < end; a++)
-		segment[a] = temp[c++];
+	for (left = front, right = mid, merge_idx = 0; left < mid && right < back; merge_idx++)
+		buff[merge_idx] = (subarr[left] < subarr[right]) ? subarr[left++] : subarr[right++];
+	while (left < mid)
+		buff[merge_idx++] = subarr[left++];
+	while (right < back)
+		buff[merge_idx++] = subarr[right++];
+	for (left = front, merge_idx = 0; left < back; left++)
+		subarr[left] = buff[merge_idx++];
 
-	printf("[Finished]: ");
-	print_array(segment + start, end - start);
+	printf("[Completed]: ");
+	print_array(subarr + front, back - front);
 }
 
 /**
